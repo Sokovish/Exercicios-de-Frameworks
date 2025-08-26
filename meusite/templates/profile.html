@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Perfil{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Perfil</h3>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Usuário:</strong> {{ user.username }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+    </ul>
+    <a href="{% url 'password_change' %}" class="btn btn-warning mt-3">Alterar senha</a>
+    <a href="{% url 'logout' %}" class="btn btn-danger mt-3">Logout</a>
+</div>
+{% endblock %}
