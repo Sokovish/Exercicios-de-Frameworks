@@ -5,5 +5,12 @@
     <h1>Bem-vindo, {{ user.username }}!</h1>
     <a href="{% url 'profile' %}" class="btn btn-primary">Perfil</a>
     <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    <hr>
+    <div class="mt-4">
+        <h5>Acessar telas de erro (teste):</h5>
+        <a href="{% url 'erro_404' %}" class="btn btn-outline-danger m-1">Erro 404</a>
+        <a href="{% url 'erro_403' %}" class="btn btn-outline-warning m-1">Erro 403</a>
+        <a href="{% url 'erro_500' %}" class="btn btn-outline-secondary m-1">Erro 500</a>
+    </div>
 </div>
 {% endblock %}

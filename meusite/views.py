@@ -1,9 +1,18 @@
+def erro_404(request, exception=None):
+    return render(request, '404.html', status=404)
+
+def erro_403(request, exception=None):
+    return render(request, '403.html', status=403)
+
+def erro_500(request):
+    return render(request, '500.html', status=500)
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.views import PasswordResetView, PasswordChangeView
+from django.urls import reverse_lazy
 
 def Home(request):
     if request.user.is_authenticated:
@@ -16,36 +25,38 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
         if not username or not password:
-            return render(request, 'login.html', {'error': 'Preencha todos os campos.'})
+            messages.error(request, 'Preencha todos os campos.')
+            return render(request, 'login.html')
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
             return redirect('home')
         else:
-            return render(request, 'login.html', {'error': 'Usuário ou senha inválidos'})
+            messages.error(request, 'Usuário ou senha inválidos')
+            return render(request, 'login.html')
     return render(request, 'login.html')
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return render(request, 'logout.html')
 
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '').strip()
-        errors = []
-        if not username or not email or not password:
-            errors.append('Preencha todos os campos.')
+
         if User.objects.filter(username=username).exists():
-            errors.append('Usuário já existe.')
+            messages.error(request, 'Nome de usuário já está em uso. Escolha outro.')
+            return render(request, 'register.html')
+
         if User.objects.filter(email=email).exists():
-            errors.append('Email já cadastrado.')
-        if errors:
-            return render(request, 'register.html', {'error': ' '.join(errors)})
-        user = User.objects.create_user(username=username, email=email, password=password)
-        login(request, user)
-        return redirect('home')
+            messages.error(request, 'E-mail já cadastrado. Use outro ou recupere a senha.')
+            return render(request, 'register.html')
+
+    user = User.objects.create_user(username=username, email=email, password=password)
+    messages.success(request, 'Cadastro realizado com sucesso! Faça login.')
+    return redirect('login')
     return render(request, 'register.html')
 
 @login_required
@@ -60,3 +71,13 @@ class CustomPasswordResetView(PasswordResetView):
 
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = 'password_change.html'
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Senha alterada com sucesso!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        for error in form.errors.values():
+            messages.error(self.request, error)
+        return super().form_invalid(form)

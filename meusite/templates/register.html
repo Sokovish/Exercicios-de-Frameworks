@@ -4,8 +4,10 @@
 <div class="row justify-content-center">
     <div class="col-md-4">
         <h3 class="text-center mb-4">Cadastro</h3>
-        {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
         {% endif %}
         <form method="post">
             {% csrf_token %}

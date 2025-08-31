@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Erro 500 - Erro interno{% endblock %}
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="display-1 text-secondary">500</h1>
+    <h2 class="mb-4">Erro interno do servidor</h2>
+    <p class="lead">Ocorreu um erro inesperado. Tente novamente mais tarde.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Voltar para o painel</a>
+</div>
+{% endblock %}
