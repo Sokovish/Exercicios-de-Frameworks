@@ -54,9 +54,9 @@ def register_view(request):
             messages.error(request, 'E-mail já cadastrado. Use outro ou recupere a senha.')
             return render(request, 'register.html')
 
-    user = User.objects.create_user(username=username, email=email, password=password)
-    messages.success(request, 'Cadastro realizado com sucesso! Faça login.')
-    return redirect('login')
+        user = User.objects.create_user(username=username, email=email, password=password)
+        messages.success(request, 'Cadastro realizado com sucesso! Faça login.')
+        return redirect('login')
     return render(request, 'register.html')
 
 @login_required
