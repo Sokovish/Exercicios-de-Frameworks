@@ -13,6 +13,7 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('password_reset/', views.CustomPasswordResetView.as_view(), name='password_reset'),
     path('password_change/', views.CustomPasswordChangeView.as_view(), name='password_change'),
+    path('lista_pessoas/', views.lista_pessoas, name='lista_pessoas'),
 
     path('erro_404/', views.erro_404, name='erro_404'),
     path('erro_403/', views.erro_403, name='erro_403'),

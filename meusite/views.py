@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.views import PasswordResetView, PasswordChangeView
 from django.urls import reverse_lazy
+from .models import Pessoa
 
 def Home(request):
     if request.user.is_authenticated:
@@ -81,3 +82,8 @@ class CustomPasswordChangeView(PasswordChangeView):
         for error in form.errors.values():
             messages.error(self.request, error)
         return super().form_invalid(form)
+
+@login_required
+def lista_pessoas(request):
+    pessoas = Pessoa.objects.all()
+    return render(request, 'lista_pessoas.html', {'pessoas': pessoas})
