@@ -17,7 +17,8 @@ from .models import Pessoa
 
 def Home(request):
     if request.user.is_authenticated:
-        return render(request, 'home.html')
+        pessoas = Pessoa.objects.select_related('usuario', 'endereco').all()
+        return render(request, 'home.html', {'pessoas': pessoas})
     else:
         return redirect('login')
 

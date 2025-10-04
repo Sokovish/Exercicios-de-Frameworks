@@ -6,6 +6,34 @@
     <a href="{% url 'profile' %}" class="btn btn-primary">Perfil</a>
     <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
     <hr>
+    <hr>
+    <div class="mt-4">
+        <h4>Pessoas cadastradas</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Usuário</th>
+                    <th>Endereço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pessoa in pessoas %}
+                <tr>
+                    <td>{{ pessoa.nome }}</td>
+                    <td>{% if pessoa.usuario %}{{ pessoa.usuario.username }}{% else %}-{% endif %}</td>
+                    <td>
+                        {% if pessoa.endereco %}
+                            {{ pessoa.endereco.rua }}, {{ pessoa.endereco.numero }}, {{ pessoa.endereco.bairro }}, {{ pessoa.endereco.cidade }} - {{ pessoa.endereco.estado }}<br>{{ pessoa.endereco.cep }}
+                        {% else %}-{% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">Nenhuma pessoa cadastrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <div class="mt-4">
         <h5>Acessar telas de erro (teste):</h5>
         <a href="{% url 'erro_404' %}" class="btn btn-outline-danger m-1">Erro 404</a>
