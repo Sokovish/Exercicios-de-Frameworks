@@ -1,3 +1,16 @@
+def admin_dashboard(request):
+    from django.contrib.auth.decorators import login_required
+    @login_required
+    def inner(request):
+        return render(request, 'admin_dashboard.html')
+    return inner(request)
+
+def gerente_dashboard(request):
+    from django.contrib.auth.decorators import login_required
+    @login_required
+    def inner(request):
+        return render(request, 'gerente_dashboard.html')
+    return inner(request)
 def erro_404(request, exception=None):
     return render(request, '404.html', status=404)
 
@@ -6,6 +19,7 @@ def erro_403(request, exception=None):
 
 def erro_500(request):
     return render(request, '500.html', status=500)
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -17,8 +31,7 @@ from .models import Pessoa
 
 def Home(request):
     if request.user.is_authenticated:
-        pessoas = Pessoa.objects.select_related('usuario', 'endereco').all()
-        return render(request, 'home.html', {'pessoas': pessoas})
+        return render(request, 'home.html')
     else:
         return redirect('login')
 
@@ -32,7 +45,17 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('home')
+            # Redirecionamento por tipo de usuário
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            # Busca Pessoa vinculada ao usuário
+            pessoa = Pessoa.objects.filter(usuario=user).first()
+            if pessoa and pessoa.cargo == 'gerente':
+                return redirect('gerente_dashboard')
+            elif pessoa and pessoa.cargo == 'admin':
+                return redirect('admin_dashboard')
+            else:
+                return redirect('home')
         else:
             messages.error(request, 'Usuário ou senha inválidos')
             return render(request, 'login.html')
