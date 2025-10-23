@@ -14,6 +14,20 @@ from django.contrib import messages
 from django.contrib.auth.views import PasswordResetView, PasswordChangeView
 from django.urls import reverse_lazy
 from .models import Pessoa
+from django.http import HttpResponseForbidden
+
+
+def _get_user_role(user):
+    """Retorna 'admin', 'gerente' ou 'comum' baseado no User/Pessoa."""
+    if not user or not user.is_authenticated:
+        return None
+    if user.is_superuser or user.is_staff:
+        return 'admin'
+    pessoa = Pessoa.objects.filter(usuario=user).first()
+    if pessoa:
+        # se o campo cargo existir no modelo, use-o, caso contrário trate como comum
+        return getattr(pessoa, 'cargo', 'comum')
+    return 'comum'
 
 def Home(request):
     if request.user.is_authenticated:
@@ -32,6 +46,11 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
+            role = _get_user_role(user)
+            if role == 'admin':
+                return redirect('admin_dashboard')
+            if role == 'gerente':
+                return redirect('gerente_dashboard')
             return redirect('home')
         else:
             messages.error(request, 'Usuário ou senha inválidos')
@@ -88,3 +107,18 @@ class CustomPasswordChangeView(PasswordChangeView):
 def lista_pessoas(request):
     pessoas = Pessoa.objects.all()
     return render(request, 'lista_pessoas.html', {'pessoas': pessoas})
+
+@login_required
+def admin_dashboard(request):
+    role = _get_user_role(request.user)
+    if role != 'admin':
+        return HttpResponseForbidden('Acesso negado')
+    return render(request, 'admin_dashboard.html')
+
+@login_required
+def gerente_dashboard(request):
+    role = _get_user_role(request.user)
+    if role != 'gerente' and role != 'admin':
+        # administradores também podem acessar, se desejar
+        return HttpResponseForbidden('Acesso negado')
+    return render(request, 'gerente_dashboard.html')

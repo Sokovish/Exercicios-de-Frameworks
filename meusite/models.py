@@ -21,6 +21,7 @@ class Pessoa(models.Model):
     rg = models.CharField(max_length=20)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.SET_NULL, null=True, blank=True)
+    cargo = models.CharField(max_length=20, choices=[('comum', 'Comum'), ('gerente', 'Gerente'), ('admin', 'Administrador')], default='comum')
 
     def __str__(self):
         return self.nome
