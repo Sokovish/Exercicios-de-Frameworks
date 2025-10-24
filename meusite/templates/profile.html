@@ -12,6 +12,33 @@
         <li class="list-group-item"><strong>Usuário:</strong> {{ user.username }}</li>
         <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
     </ul>
+    {% if pessoa %}
+    <h4 class="mt-4">Dados pessoais</h4>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Nome:</strong> {{ pessoa.nome|default:"—" }}</li>
+        <li class="list-group-item"><strong>CPF:</strong> {{ pessoa.cpf|default:"—" }}</li>
+        <li class="list-group-item"><strong>Telefone:</strong> {{ pessoa.telefone|default:"—" }}</li>
+        <li class="list-group-item"><strong>Data de nascimento:</strong> {{ pessoa.data_nascimento|default:"—" }}</li>
+        <li class="list-group-item"><strong>RG:</strong> {{ pessoa.rg|default:"—" }}</li>
+        <li class="list-group-item"><strong>Cargo:</strong> {{ pessoa.cargo|default:"—" }}</li>
+    </ul>
+
+    <h4 class="mt-4">Endereço</h4>
+    {% if pessoa.endereco %}
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Rua:</strong> {{ pessoa.endereco.rua|default:"—" }}</li>
+        <li class="list-group-item"><strong>Número:</strong> {{ pessoa.endereco.numero|default:"—" }}</li>
+        <li class="list-group-item"><strong>Bairro:</strong> {{ pessoa.endereco.bairro|default:"—" }}</li>
+        <li class="list-group-item"><strong>Cidade:</strong> {{ pessoa.endereco.cidade|default:"—" }}</li>
+        <li class="list-group-item"><strong>Estado:</strong> {{ pessoa.endereco.estado|default:"—" }}</li>
+        <li class="list-group-item"><strong>CEP:</strong> {{ pessoa.endereco.cep|default:"—" }}</li>
+    </ul>
+    {% else %}
+        <p class="text-muted">Endereço não cadastrado.</p>
+    {% endif %}
+    {% else %}
+        <p class="text-muted mt-3">Nenhum registro de Pessoa associado a este usuário.</p>
+    {% endif %}
     <a href="{% url 'password_change' %}" class="btn btn-warning mt-3">Alterar senha</a>
     <a href="{% url 'logout' %}" class="btn btn-danger mt-3">Logout</a>
     <a href="{% url 'home' %}" class="btn btn-outline-primary mt-3"><i class="bi bi-arrow-left"></i> Voltar para o painel</a>

@@ -82,7 +82,9 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'profile.html')
+    # busca a Pessoa associada ao usuário, se existir, incluindo o endereço
+    pessoa = Pessoa.objects.filter(usuario=request.user).select_related('endereco').first()
+    return render(request, 'profile.html', {'pessoa': pessoa})
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'password_reset.html'
